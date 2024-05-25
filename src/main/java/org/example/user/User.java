@@ -6,16 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+    private int id;
     private String name;
     private String password;
     private UserTypeEnum userTypeEnum;
-    private List<Playlist> playlists;
+
+    public static User currentUser;
 
     public User(String name, String password, UserTypeEnum userTypeEnum) {
         this.name = name;
         this.password = password;
         this.userTypeEnum = userTypeEnum;
-        this.playlists = new ArrayList<>();
+    }
+
+    public User(int id, String name, String password, UserTypeEnum userTypeEnum) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.userTypeEnum = userTypeEnum;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -28,10 +40,6 @@ public class User {
 
     public UserTypeEnum getUserTypeEnum() {
         return userTypeEnum;
-    }
-
-    public void setUserTypeEnum(UserTypeEnum userTypeEnum) {
-        this.userTypeEnum = userTypeEnum;
     }
 
     @Override

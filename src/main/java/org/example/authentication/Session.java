@@ -1,95 +1,105 @@
 package org.example.authentication;
 
+import org.example.database.MySQLDatabase;
+import org.example.exceptions.PermissionException;
+import org.example.repository.UserRepository;
 import org.example.user.User;
 import org.example.user.UserTypeEnum;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Session {
-    private List<User> users;
-    private User currentUser;
+    private UserRepository userRepository;
 
     public Session() {
-        users = new ArrayList<>();
-        currentUser = new User(null, null, UserTypeEnum.ANONYMOUS);
+        setCurrentUserAnonymous();
+        this.userRepository = UserRepository.getInstance(MySQLDatabase.getInstance());
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public User getUserByName(String username) {
+        return userRepository.getUserByName(username);
     }
 
     public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+        User.currentUser = currentUser;
     }
 
     public void setCurrentUserAnonymous() {
-        this.currentUser = new User(null, null, UserTypeEnum.ANONYMOUS);
+        User.currentUser = new User(null, null, UserTypeEnum.ANONYMOUS);
     }
 
-    public void register(String username, String password) {
-        if (currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
-            System.out.println("You must logout first");
-            return;
+    public boolean register(String username, String password) {
+        if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
+            System.out.println("You must logout first!");
+            return false;
         }
 
-        if (users.isEmpty()) {
-            users.add(new User(username, password, UserTypeEnum.ADMIN));
-            System.out.println("User 1st ADMIN registered successfully");
-
-            setCurrentUser(users.get(0)); // auto login
-            return;
-        }
+        List<User> users = userRepository.getAllUsers();
 
         for (User user : users) {
-            if (user.getName().equals(username)) {
-                throw new IllegalArgumentException("User already exists");
+            if (user.getName().equalsIgnoreCase(username)) {
+                System.out.println("User with given username already exists! Please try again!");
+                return false;
             }
         }
 
-        users.add(new User(username, password, UserTypeEnum.USER));
-        System.out.println("User registered successfully");
-    }
-
-    public void login(String username, String password) {
-        if (currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
-            System.out.println("You must logout first");
-            return;
+        User userToAdd;
+        if (users.isEmpty()) {
+            userToAdd = new User(username, password, UserTypeEnum.ADMIN);
+        }
+        else {
+            userToAdd = new User(username, password, UserTypeEnum.USER);
         }
 
-        for (User user : users) {
-            if (user.getName().equals(username) && user.getPassword().equals(password)) {
-//                user.setUserTypeEnum(UserTypeEnum.USER);
-                System.out.println("Login successful as " + user.getName());
+        userRepository.addUser(userToAdd);
+        setCurrentUser(userToAdd); // auto login
+        System.out.println("User registered successfully");
+        return true;
+    }
+
+    public boolean login(String username, String password) {
+        if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
+            System.out.println("You must logout first!");
+            return false;
+        }
+
+        for (User user : userRepository.getAllUsers()) {
+            if (user.getName().equalsIgnoreCase(username) && user.getPassword().equals(password)) {
+                System.out.println("You are now authenticated as " + user.getName());
 
                 setCurrentUser(user);
-                return;
+                return true;
             }
         }
 
-        throw new IllegalArgumentException("Invalid username or password");
+        System.out.println("Username or password is invalid. Please try again!");
+        return false;
     }
 
-    public void logout() {
-//        currentUser.setUserTypeEnum(UserTypeEnum.ANONYMOUS);
+    public boolean logout() {
+        if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
+            System.out.println("You are not logged in");
+            return false;
+        }
         setCurrentUserAnonymous();
-        System.out.println("Logout successful");
+        System.out.println("Successfully logged out.");
+        return true;
     }
 
-    public void promote(String username) {
-        if (currentUser.getUserTypeEnum() != UserTypeEnum.ADMIN) {
-            System.out.println("You must be an admin to promote");
-            return;
+    public boolean promote(String username) {
+        if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ADMIN) {
+            throw new PermissionException("You do not have the permission to use this!");
         }
 
-        for (User userToPromote : users) {
-            if (userToPromote.getName().equals(username)) {
-                userToPromote.setUserTypeEnum(UserTypeEnum.ADMIN);
-                System.out.println("User promoted to admin");
-                return;
+        for (User userToPromote : userRepository.getAllUsers()) {
+            if (userToPromote.getName().equalsIgnoreCase(username)) {
+                userRepository.promoteUser(userToPromote);
+                System.out.println(userToPromote.getName() + " is now an administrator!");
+                return true;
             }
         }
 
-        throw new IllegalArgumentException("User not found");
+        System.out.println("Specified user does not exist!");
+        return false;
     }
 }

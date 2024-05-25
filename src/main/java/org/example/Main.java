@@ -1,27 +1,35 @@
 package org.example;
 
-import org.example.authentication.Session;
 import org.example.database.MySQLDatabase;
-import org.example.user.User;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import org.example.input.ParseInput;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Session session = new Session();
-        session.register("sysadmin", "password1");
-        session.logout();
-        session.register("user2", "password2");
 
-        session.login("user2", "password2");
-        session.promote("user2");
-        session.logout();
-        session.login("sysadmin", "password1");
-        session.logout();
+        MySQLDatabase db = MySQLDatabase.getInstance();
+        db.createTables();
+
+        String inputString = "";
 
 
+
+//<dependency>
+//    <groupId>com.fasterxml.jackson.core</groupId>
+//    <artifactId>jackson-databind</artifactId>
+//    <version>2.12.3</version>
+//</dependency>
+
+
+
+
+
+        while (!inputString.equalsIgnoreCase("quit")) {
+            Scanner scanner = new Scanner(System.in);
+            inputString = scanner.nextLine();
+            inputString = inputString.trim().replaceAll(" +", " ");
+
+            ParseInput.parseInput(inputString);
+        }
     }
 }
