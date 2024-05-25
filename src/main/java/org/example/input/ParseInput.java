@@ -9,8 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParseInput {
-    private static CommandExecution commandExecution = CommandExecution.getInstance();
+    private static final CommandExecution commandExecution = CommandExecution.getInstance();
 
+    /**
+     * Parse the input string and execute the corresponding command.
+     * @param inputString The input string to be parsed.
+     */
     public static void parseInput(String inputString) {
         if (inputString.isBlank()) {
             return;
@@ -63,6 +67,9 @@ public class ParseInput {
                     commandStatusOk = commandExecution.userPromote(inputList.get(1));
                     break;
                 case "create":
+                    if (nrOfArguments < 3 || nrOfArguments > 5) {
+                        throw new InvalidArguments("Invalid number of arguments!\nUsage: create song/playlist \"<title>\" \"<artist>\" <releaseYear>");
+                    }
                     switch(inputList.get(1)) {
                         case "song":
                             if (nrOfArguments != 5) {

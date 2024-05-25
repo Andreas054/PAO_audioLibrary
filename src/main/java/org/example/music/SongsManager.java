@@ -14,9 +14,9 @@ import java.util.Map;
 public class SongsManager {
     private static SongsManager instance = null;
 
-    private SongRepository songRepository;
-    private PlaylistRepository playlistRepository;
-    private PlaylistsSongsRepository playlistsSongsRepository;
+    private final SongRepository songRepository;
+    private final PlaylistRepository playlistRepository;
+    private final PlaylistsSongsRepository playlistsSongsRepository;
 
     private SongsManager() {
         this.songRepository = SongRepository.getInstance();
@@ -31,6 +31,14 @@ public class SongsManager {
         return instance;
     }
 
+
+    /**
+     * Create a new song and add it to the library.
+     * @param title The title of the song.
+     * @param artist The artist of the song.
+     * @param year The year the song was released.
+     * @return True if the song was added successfully, false otherwise.
+     */
     public boolean createSong(String title, String artist, String year) {
         if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ADMIN) {
             throw new PermissionException("You do not have the permission to use this!");
@@ -49,6 +57,12 @@ public class SongsManager {
         return true;
     }
 
+    /**
+     * Add a list of songs to a playlist.
+     * @param playlistUuid The UUID of the playlist.
+     * @param songUuidListToAdd The list of UUIDs of the songs to add.
+     * @return True if ALL songs were added successfully, false otherwise.
+     */
     public boolean addSongToPlaylistById(String playlistUuid, List<String> songUuidListToAdd) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");
@@ -92,6 +106,13 @@ public class SongsManager {
         return true;
     }
 
+
+    /**
+     * Add a list of songs to a playlist.
+     * @param playlistName The name of the playlist.
+     * @param songUuidList The list of UUIDs of the songs to add.
+     * @return True if ALL songs were added successfully, false otherwise.
+     */
     public boolean addSongToPlaylistByName(String playlistName, List<String> songUuidList) {
         Playlist playlistCurrent = playlistRepository.getPlaylistByName(playlistName, User.currentUser);
         if (playlistCurrent == null) {

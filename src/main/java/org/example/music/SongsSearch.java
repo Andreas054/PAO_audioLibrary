@@ -9,17 +9,30 @@ import org.example.user.UserTypeEnum;
 import java.util.List;
 
 public class SongsSearch {
-    private SongRepository songRepository;
+    private final SongRepository songRepository;
 
     public SongsSearch() {
         this.songRepository = SongRepository.getInstance();
     }
 
+    /**
+     * Get the number of pages for a specific search criteria
+     * @param column the column to search by (name, author)
+     * @param value  the value to search for
+     * @return the number of pages
+     */
     public int getNrPagini(String column, String value) {
         value = "'" + value + "'";
         return songRepository.getNrPagini("songs", column, value);
     }
 
+    /**
+     * Search for songs based on a criteria
+     * @param criteria the criteria to search by (name, author)
+     * @param value the value to search for
+     * @param paginaCurenta the current page
+     * @return true if the search was successful, false otherwise
+     */
     public boolean searchSongs(String criteria, String value, int paginaCurenta) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");

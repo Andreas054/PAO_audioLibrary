@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 public class MySQLDatabase implements DatabaseInterface {
     private static MySQLDatabase instance = null;
-    private String url;
-    private String user;
-    private String password;
+    private final String url;
+    private final String user;
+    private final String password;
 
     public static int nrElementePagina = 5;
 
     private MySQLDatabase()  {
-        url = "jdbc:mysql://16.171.166.64:3306/pao";
-//        url = "jdbc:mysql://localhost:3306/pao";
+//        url = "jdbc:mysql://16.171.166.64:3306/pao";
+        url = "jdbc:mysql://localhost:3306/pao";
         user = "admin";
         password = "admin";
     }
@@ -30,14 +30,18 @@ public class MySQLDatabase implements DatabaseInterface {
     public Connection connect() throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
-    
+
+    /**
+     * Create tables
+     */
     public void createTables() {
-        String sql = "CREATE TABLE IF NOT EXISTS users (\n"
-                + "id INT AUTO_INCREMENT PRIMARY KEY,\n"
-                + "name VARCHAR(255) NOT NULL,\n"
-                + "password VARCHAR(255) NOT NULL,\n"
-                + "user_type ENUM('ADMIN', 'USER')\n"
-                + ");";
+        String sql = """
+                CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                user_type ENUM('ADMIN', 'USER')
+                );""";
 
         try (Connection conn = connect();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -47,12 +51,13 @@ public class MySQLDatabase implements DatabaseInterface {
         }
 
 
-        sql = "CREATE TABLE IF NOT EXISTS songs (\n"
-                + "uuid VARCHAR(36) PRIMARY KEY,\n"
-                + "title VARCHAR(255) NOT NULL,\n"
-                + "artist VARCHAR(255) NOT NULL,\n"
-                + "year INT NOT NULL\n"
-                + ");";
+        sql = """
+                CREATE TABLE IF NOT EXISTS songs (
+                uuid VARCHAR(36) PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                artist VARCHAR(255) NOT NULL,
+                year INT NOT NULL
+                );""";
 
         try (Connection conn = connect();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -62,11 +67,12 @@ public class MySQLDatabase implements DatabaseInterface {
         }
 
 
-        sql = "CREATE TABLE IF NOT EXISTS playlists (\n"
-                + "uuid VARCHAR(36) PRIMARY KEY,\n"
-                + "name VARCHAR(255) NOT NULL,\n"
-                + "user_id INT\n"
-                + ");";
+        sql = """
+                CREATE TABLE IF NOT EXISTS playlists (
+                uuid VARCHAR(36) PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                user_id INT
+                );""";
 
         try (Connection conn = connect();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -76,11 +82,12 @@ public class MySQLDatabase implements DatabaseInterface {
         }
 
 
-        sql = "CREATE TABLE IF NOT EXISTS playlists_songs (\n"
-                + "playlist_uuid VARCHAR(36),\n"
-                + "song_uuid VARCHAR(36),\n"
-                + "PRIMARY KEY (playlist_uuid, song_uuid) \n"
-                + ");";
+        sql = """
+                CREATE TABLE IF NOT EXISTS playlists_songs (
+                playlist_uuid VARCHAR(36),
+                song_uuid VARCHAR(36),
+                PRIMARY KEY (playlist_uuid, song_uuid)\s
+                );""";
 
         try (Connection conn = connect();
                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -89,12 +96,13 @@ public class MySQLDatabase implements DatabaseInterface {
                 System.out.println(e.getMessage());
             }
 
-        sql = "CREATE TABLE IF NOT EXISTS audit (\n"
-                + "id INT AUTO_INCREMENT PRIMARY KEY,\n"
-                + "user_id INT,\n"
-                + "command VARCHAR(500),\n"
-                + "rulat_ok BOOL\n"
-                + ");";
+        sql = """
+                CREATE TABLE IF NOT EXISTS audit (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT,
+                command VARCHAR(500),
+                rulat_ok BOOL
+                );""";
 
         try (Connection conn = connect();
                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {

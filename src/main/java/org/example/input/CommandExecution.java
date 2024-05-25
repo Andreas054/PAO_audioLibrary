@@ -11,13 +11,13 @@ import java.util.List;
 
 public class CommandExecution {
     private static CommandExecution instance = null;
-    private Session session;
-    private SongsManager songsManager;
-    private PlaylistManager playlistManager;
-    private SongsSearch songsSearch;
-    private AuditManager auditManager;
-    private PlaylistExport playlistExport;
-    private PlaylistImport playlistImport;
+    private final Session session;
+    private final SongsManager songsManager;
+    private final PlaylistManager playlistManager;
+    private final SongsSearch songsSearch;
+    private final AuditManager auditManager;
+    private final PlaylistExport playlistExport;
+    private final PlaylistImport playlistImport;
 
     private CommandExecution() {
         this.session = new Session();

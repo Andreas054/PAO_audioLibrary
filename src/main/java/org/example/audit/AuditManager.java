@@ -10,7 +10,7 @@ import org.example.user.UserTypeEnum;
 import java.util.List;
 
 public class AuditManager {
-    private AuditRepository auditRepository;
+    private final AuditRepository auditRepository;
 
     public AuditManager() {
         this.auditRepository = AuditRepository.getInstance();
@@ -24,6 +24,11 @@ public class AuditManager {
         return auditRepository.addAudit(new Audit(User.currentUser.getId(), command, rulatOk));
     }
 
+    /**
+     * Re-runs the command from the audit table with the given id.
+     * @param id The id of the audit.
+     * @return True if the command was successfully re-run, false otherwise.
+     */
     public boolean reRunAuditCommand(int id) {
         Audit audit = auditRepository.getAuditById(id);
         if (audit == null) {
@@ -40,6 +45,12 @@ public class AuditManager {
         return true;
     }
 
+    /**
+     * Returns the audits for the given user.
+     * @param user The user for which to get the audits.
+     * @param paginaCurenta The current page.
+     * @return True if the audits were successfully retrieved, false otherwise.
+     */
     public boolean getAuditsForUser(User user, int paginaCurenta) {
         if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ADMIN) {
             throw new PermissionException("You do not have the permission to use this!");

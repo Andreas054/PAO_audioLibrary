@@ -15,9 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PlaylistImport {
-    private PlaylistRepository playlistRepository;
+    private final PlaylistRepository playlistRepository;
 
-    private SongsManager songsManager;
+    private final SongsManager songsManager;
 
     public PlaylistImport() {
         this.playlistRepository = PlaylistRepository.getInstance();
@@ -25,6 +25,13 @@ public class PlaylistImport {
         this.songsManager = SongsManager.getInstance();
     }
 
+    /**
+     * Imports a playlist from a file.
+     * @param playlistUuid The UUID of the playlist to import to.
+     * @param format The format of the file (csv, json, txt).
+     * @param pathToFile The path to the file.
+     * @return True if the import was successful, false otherwise.
+     */
     public boolean importPlaylistById(String playlistUuid, String format, String pathToFile) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");
@@ -86,6 +93,14 @@ public class PlaylistImport {
         return songsManager.addSongToPlaylistById(playlistUuid, songUuidList);
     }
 
+
+    /**
+     * Imports a playlist from a file.
+     * @param playlistName The name of the playlist to import to.
+     * @param format The format of the file (csv, json, txt).
+     * @param pathToFile The path to the file.
+     * @return True if the import was successful, false otherwise.
+     */
     public boolean importPlaylistByName(String playlistName, String format, String pathToFile) {
         Playlist playlistCurrent = playlistRepository.getPlaylistByName(playlistName, User.currentUser);
         if (playlistCurrent == null) {

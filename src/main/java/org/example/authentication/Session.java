@@ -9,7 +9,7 @@ import org.example.user.UserTypeEnum;
 import java.util.List;
 
 public class Session {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public Session() {
         setCurrentUserAnonymous();
@@ -28,6 +28,14 @@ public class Session {
         User.currentUser = new User(null, null, UserTypeEnum.ANONYMOUS);
     }
 
+    /**
+     * Registers a new user with the given username and password.
+     * If the user is already logged in or the username already exists the method will return false.
+     * The first user to register will be an admin.
+     * @param username the username of the user
+     * @param password the password of the user
+     * @return true if the user was successfully registered, false otherwise
+     */
     public boolean register(String username, String password) {
         if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
             System.out.println("You must logout first!");
@@ -52,11 +60,18 @@ public class Session {
         }
 
         userRepository.addUser(userToAdd);
-        setCurrentUser(userToAdd); // auto login
         System.out.println("User registered successfully");
-        return true;
+        // auto login after registration
+        return this.login(username, password);
     }
 
+    /**
+     * Logs in the user with the given username and password.
+     * If the user is already logged in or the username or password is invalid the method will return false.
+     * @param username the username of the user
+     * @param password the password of the user
+     * @return true if the user was successfully logged in, false otherwise
+     */
     public boolean login(String username, String password) {
         if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ANONYMOUS) {
             System.out.println("You must logout first!");
@@ -76,6 +91,10 @@ public class Session {
         return false;
     }
 
+    /**
+     * Logs out the current user.
+     * @return true if the user was successfully logged out, false if the user is not logged in
+     */
     public boolean logout() {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             System.out.println("You are not logged in");
@@ -86,6 +105,12 @@ public class Session {
         return true;
     }
 
+    /**
+     * Promotes the user with the given username to an administrator.
+     * If the current user is not an administrator or the user does not exist the method will return false.
+     * @param username the username of the user to promote
+     * @return true if the user was successfully promoted, false otherwise
+     */
     public boolean promote(String username) {
         if (User.currentUser.getUserTypeEnum() != UserTypeEnum.ADMIN) {
             throw new PermissionException("You do not have the permission to use this!");

@@ -12,7 +12,7 @@ public class Main {
 
         String inputString = "";
 
-
+//        mysql -h 127.0.0.1 -P 3306 -u admin --password=admin
 
 //<dependency>
 //    <groupId>com.fasterxml.jackson.core</groupId>

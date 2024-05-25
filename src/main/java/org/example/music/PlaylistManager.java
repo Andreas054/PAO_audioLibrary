@@ -9,16 +9,25 @@ import org.example.user.UserTypeEnum;
 import java.util.List;
 
 public class PlaylistManager {
-    private PlaylistRepository playlistRepository;
+    private final PlaylistRepository playlistRepository;
 
     public PlaylistManager() {
         this.playlistRepository = PlaylistRepository.getInstance();
     }
 
+    /**
+     * Get the number of pages of playlists for the current user
+     * @return the number of pages
+     */
     public int getNrPagini() {
         return playlistRepository.getNrPagini("playlists", "user_id", User.currentUser.getId());
     }
 
+    /**
+     * Create a playlist for the current user
+     * @param playlistName the name of the playlist
+     * @return true if the playlist was created successfully, false otherwise
+     */
     public boolean createPlaylist(String playlistName) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");
@@ -41,6 +50,11 @@ public class PlaylistManager {
         return true;
     }
 
+    /**
+     * Get all playlists for the current user
+     * @param paginaCurenta the current page
+     * @return true if the playlists were retrieved successfully, false otherwise
+     */
     public boolean getPlaylistsForCurrentUser(int paginaCurenta) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");

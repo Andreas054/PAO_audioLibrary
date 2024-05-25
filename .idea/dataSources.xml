@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="pao@gasparovici.hopto.org" uuid="c303b21e-3048-4bfc-8fa2-326ea1e54198">
+    <data-source source="LOCAL" name="pao@16.171.166.64" uuid="c303b21e-3048-4bfc-8fa2-326ea1e54198">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://gasparovici.hopto.org:3306/pao</jdbc-url>
+      <jdbc-url>jdbc:mysql://16.171.166.64:3306/pao</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

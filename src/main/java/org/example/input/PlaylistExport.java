@@ -16,9 +16,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PlaylistExport {
-    private SongRepository songRepository;
-    private PlaylistRepository playlistRepository;
-    private PlaylistsSongsRepository playlistsSongsRepository;
+    private final SongRepository songRepository;
+    private final PlaylistRepository playlistRepository;
+    private final PlaylistsSongsRepository playlistsSongsRepository;
 
     private Playlist currentPlaylist;
 
@@ -28,6 +28,11 @@ public class PlaylistExport {
         this.playlistsSongsRepository = PlaylistsSongsRepository.getInstance();
     }
 
+    /**
+     * Get all songs inside a playlist
+     * @param playlistUuid - the playlist id
+     * @return a list of songs
+     */
     public List<Song> getSongsForPlaylist(String playlistUuid) {
         if (User.currentUser.getUserTypeEnum() == UserTypeEnum.ANONYMOUS) {
             throw new PermissionException("You do not have the permission to use this!");
@@ -51,6 +56,12 @@ public class PlaylistExport {
         return songsToExport;
     }
 
+    /**
+     * Export a playlist by id
+     * @param playlistUuid - the playlist id
+     * @param format - the format of the export (json, csv, txt)
+     * @return true if the export was successful, false otherwise
+     */
     public boolean exportPlaylistById(String playlistUuid, String format) {
         List<Song> songsToExport = this.getSongsForPlaylist(playlistUuid);
         if (songsToExport == null) {
@@ -97,6 +108,12 @@ public class PlaylistExport {
         return false;
     }
 
+    /**
+     * Export a playlist by name
+     * @param playlistName - the playlist name
+     * @param format - the format of the export (json, csv, txt)
+     * @return true if the export was successful, false otherwise
+     */
     public boolean exportPlaylistByName(String playlistName, String format) {
         Playlist playlistCurrent = playlistRepository.getPlaylistByName(playlistName, User.currentUser);
         if (playlistCurrent == null) {

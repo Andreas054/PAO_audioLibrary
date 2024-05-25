@@ -44,7 +44,7 @@ public class AuditRepository extends Repository {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
@@ -69,7 +69,7 @@ public class AuditRepository extends Repository {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return audits;
     }
